@@ -1,0 +1,3 @@
+function getIngredients(hostname, document) {
+
+}
