@@ -30,7 +30,7 @@ function collectURLs() {
             continue
         }
 
-        recipes.push({url: url, people: people})
+        recipes.push({url: new URL(url), people: people})
     }
 }
 
@@ -53,7 +53,7 @@ xhttp.onreadystatechange = function () {
         const parser = new DOMParser();
         const responseDoc = parser.parseFromString(xhttp.responseText, "text/html");
 
-        ingredientCollection.push(getIngredients(responseDoc, recipes[index].people))
+        ingredientCollection.push(getIngredients(recipes[index], responseDoc))
 
         if (index + 1 < recipes.length) {
             index++
@@ -64,38 +64,6 @@ xhttp.onreadystatechange = function () {
         }
     }
 };
-
-function getIngredients(responseDoc, people) {
-    const list = responseDoc.getElementsByClassName("col-md-offset-3")[2];
-
-    const ingredients = [];
-
-    for (let i = 2; i < list.children.length; i++) {
-        let row = list.children[i]
-
-        let amount = ""
-        let unit = ""
-        let name = ""
-
-        if (row.childElementCount === 1) {
-            name = row.children[0].children[0].innerText.trim()
-        } else {
-            const amountUnitStrings = row.children[0].children[0].innerText.trim().split(" ")
-
-            amount = amountUnitStrings[0]
-
-            if (amountUnitStrings.length === 2) unit = amountUnitStrings[1]
-
-            name = row.children[1].children[0].innerText.trim()
-        }
-
-        if (amount !== "") amount *= people
-
-        ingredients.push({amount: amount, unit: unit, name: name})
-    }
-
-    return ingredients
-}
 
 function mergeAllRecipes() {
     if (ingredientCollection.length === 0) return
