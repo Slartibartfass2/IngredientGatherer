@@ -2,7 +2,7 @@ let index = 0;
 let recipes = [];
 let ingredientCollection = [];
 
-const supportedURLs = ["mobile.kptncook.com"]
+const supportedURLs = ["mobile.kptncook.com", "www.noracooks.com"]
 
 const urlForm = document.getElementById("urls").children[0].cloneNode(true)
 
@@ -30,7 +30,7 @@ function collectURLs() {
             continue
         }
 
-        recipes.push({url: new URL(url), people: people})
+        recipes.push({url: new URL(url), people: Number(people)})
     }
 }
 
@@ -40,6 +40,7 @@ function getRecipes() {
 
     collectURLs()
 
+    console.log("Recipes: ")
     console.log(recipes)
 
     if (recipes.length === 0) return
@@ -53,7 +54,7 @@ xhttp.onreadystatechange = function () {
         const parser = new DOMParser();
         const responseDoc = parser.parseFromString(xhttp.responseText, "text/html");
 
-        ingredientCollection.push(getIngredients(recipes[index], responseDoc))
+        ingredientCollection.push(getIngredients(recipes[index], responseDoc).ingredients)
 
         if (index + 1 < recipes.length) {
             index++
@@ -67,6 +68,9 @@ xhttp.onreadystatechange = function () {
 
 function mergeAllRecipes() {
     if (ingredientCollection.length === 0) return
+
+    console.log("collected recipes: ")
+    console.log(ingredientCollection)
 
     let result = []
     for (const recipe of ingredientCollection) {
@@ -97,8 +101,6 @@ function mergeAllRecipes() {
 }
 
 function getIndex(name, unit, result) {
-    console.log(name)
-    console.log(result)
     for (let i = 0; i < result.length; i++) {
         const element = result[i];
         if (element.name === name && element.unit === unit) {
