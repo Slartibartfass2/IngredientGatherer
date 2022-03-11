@@ -20,13 +20,13 @@ function collectURLs() {
 
         // Check for valid inputs
         if (!isURL(url) || isNaN(people) || people < 0) {
-            console.log(url + " and " + people + " are no valid input")
+            console.warn(url + " and " + people + " are no valid input")
             continue
         }
 
         // Check for supported urls
         if (!isSupportedURL(url)) {
-            console.log("The URL " + url + " is not supported")
+            console.warn("The URL " + url + " is not supported")
             continue
         }
 
@@ -35,6 +35,7 @@ function collectURLs() {
 }
 
 function getRecipes() {
+    index = 0
     recipes = []
     ingredientCollection = []
 
@@ -92,7 +93,7 @@ function mergeAllRecipes() {
     // write everything into textbox
     let resultText = "";
     for (const element of result) {
-        if (element.amount !== "") resultText += element.amount + (element.unit !== "" ? "" : " ")
+        if (element.amount !== "") resultText += element.amount + " "
         if (element.unit !== "") resultText += element.unit + " "
         resultText += element.name + "\n"
     }
@@ -130,8 +131,6 @@ function isURL(string) {
     } catch (_) {
         return false
     }
-
-    console.log(url)
 
     return url.protocol === "http:" || url.protocol === "https:"
 }
