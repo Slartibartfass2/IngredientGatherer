@@ -71,31 +71,45 @@ function getIngredientsFromNoraCooks(doc, servings) {
     const ingredients = recipeContainer.getElementsByClassName("wprm-recipe-ingredient")
 
     for (const ingredient of ingredients) {
-        let amount = ingredient.getElementsByClassName("wprm-recipe-ingredient-amount")[0].innerText.trim()
-        amount = convertFraction(amount)
+        const amountElements = ingredient.getElementsByClassName("wprm-recipe-ingredient-amount")
+        let amount = ""
+        if (amountElements.length === 1) {
+            amount = amountElements[0].innerText.trim()
+            amount = convertFraction(amount)
+        }
 
         let unit = ""
         const unitElements = ingredient.getElementsByClassName("wprm-recipe-ingredient-unit")
         if (unitElements.length === 1)
-            unit = translate(unitElements[0].innerText.trim())
+            unit = unitElements[0].innerText.trim()
 
-        const nameString = ingredient.getElementsByClassName("wprm-recipe-ingredient-name")[0].innerText.trim()
+        let nameString = ingredient.getElementsByClassName("wprm-recipe-ingredient-name")[0].innerText.trim()
+        nameString = nameString.replace(/\([-\s0-9a-zA-Z]+\)/, "").trim()
 
+        // Check if unit is in imperial system and try to convert and translate it
         if (unit !== "") {
             const metricData = convertToMetricSystemNoraCooks(unit, nameString)
             if (metricData.length === 2) {
                 amount *= metricData[0]
                 unit = metricData[1]
-            }
+            } else
+                unit = translate(unit)
         }
 
-        const name = translate(nameString)
+        // Translate name
+        let name = ""
+        const nameParts = nameString.split(",")
+        if (nameParts.length > 0) {
+            for (let i = 0; i < nameParts.length; i++) {
+                name += translate(nameParts[i].trim())
+                if (i < nameParts.length - 1)
+                    name += ", "
+            }
+        } else
+            name = translate(nameString)
 
         recipe.ingredients.push({amount: amount, unit: unit, name: name})
     }
-
-    // TODO: imperial to metric system
-    // TODO: german translation to merge with german recipes
 
     return recipe
 }
@@ -114,7 +128,8 @@ function translate(string) {
     const translatedString = translation[string]
     if (translatedString !== null && translatedString !== undefined)
         return translatedString
-    console.warn(string + " has no translation!")
+    // console.warn(string + " has no translation!")
+    // TODO: maybe translation API
     return string
 }
 

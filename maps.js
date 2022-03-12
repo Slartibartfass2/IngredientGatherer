@@ -7,6 +7,9 @@ const units = [
 const noraCooksCupMap = {
     "cooked and chilled rice": [190, "g"],
     "frozen peas": [145, "g"],
+    "raw cashews": [129, "g"],
+    "water, divided, plus more as needed to thin": [250, "ml"],
+    "nutritional yeast": [44, "g"]
 }
 
 const translation = {
@@ -15,14 +18,4 @@ const translation = {
     "tablespoon": "EL",
     "tablespoons": "EL",
     "tbsp": "EL",
-
-
-
-
-
-    "olive oil": "Olivenöl",
-    "nutritional yeast": "Nährhefe",
-    "frozen peas": "Erbsen, tiefgefroren",
-    "green onions": "Frühlingszwiebeln",
-
 }
