@@ -107,6 +107,15 @@ function mergeRecipes() {
     }
 
     document.getElementById("ingredients").value = resultText
+
+    // let data = [new ClipboardItem({ "text/plain": new Blob([resultText], { type: "text/plain" }) })];
+    // navigator.clipboard.write(data).then(function() {
+    //     console.log("Copied to clipboard successfully!");
+    //     const toast = new bootstrap.Toast(document.getElementById("toast"))
+    //     toast.show()
+    // }, function() {
+    //     console.error("Unable to write to clipboard. :-(");
+    // });
 }
 
 function getIndex(name, unit, result) {

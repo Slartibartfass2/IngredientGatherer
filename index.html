@@ -21,56 +21,11 @@
         <form class="row justify-content-center mb-3">
             <div class="col-9">
                 <input type="text" class="form-control me-lg-3 col url" placeholder="Recipe URL" aria-label="Recipe URL"
-                       value="https://www.noracooks.com/easy-vegan-nacho-cheese-sauce/">
+                       value="https://www.eat-this.org/veganes-biryani-mit-tofu/">
             </div>
             <div class="col-1">
                 <input type="text" class="form-control col-8 people" placeholder="People" aria-label="Amount of people"
-                       value="1">
-            </div>
-
-            <div class="col-1 align-self-center">
-                <button type="button" class="btn-close" aria-label="Close" onclick="deleteURLForm(this)"></button>
-            </div>
-        </form>
-
-        <form class="row justify-content-center mb-3">
-            <div class="col-9">
-                <input type="text" class="form-control me-lg-3 col url" placeholder="Recipe URL" aria-label="Recipe URL"
-                       value="http://mobile.kptncook.com/recipe/pinterest/Kartoffelpuffer-mit-Eiern-%26-gr%C3%BCner-Sauce/14388235?_branch_match_id=984928197596265013&utm_source=WhatsApp&utm_medium=sharing&_branch_referrer=H4sIAAAAAAAAA8soKSkottLXL85ILMrMS9fLLijJS87Pz9ZLzs%2FVLzL0rqioMnLNyk8CAHagzLYoAAAA">
-            </div>
-            <div class="col-1">
-                <input type="text" class="form-control col-8 people" placeholder="People" aria-label="Amount of people"
-                       value="1">
-            </div>
-
-            <div class="col-1 align-self-center">
-                <button type="button" class="btn-close" aria-label="Close" onclick="deleteURLForm(this)"></button>
-            </div>
-        </form>
-
-        <form class="row justify-content-center mb-3">
-            <div class="col-9">
-                <input type="text" class="form-control me-lg-3 col url" placeholder="Recipe URL" aria-label="Recipe URL"
-                       value="http://mobile.kptncook.com/recipe/pinterest/High-Protein-H%C3%BChnchen-Chili-One-Pot/5cf3278d?_branch_match_id=984928197596265013&utm_source=WhatsApp&utm_medium=sharing&_branch_referrer=H4sIAAAAAAAAA8soKSkottLXL85ILMrMS9fLLijJS87Pz9ZLzs%2FVzwsqMvUPSotMy08CAHOMh0AoAAAA">
-            </div>
-            <div class="col-1">
-                <input type="text" class="form-control col-8 people" placeholder="People" aria-label="Amount of people"
-                       value="1">
-            </div>
-
-            <div class="col-1 align-self-center">
-                <button type="button" class="btn-close" aria-label="Close" onclick="deleteURLForm(this)"></button>
-            </div>
-        </form>
-
-        <form class="row justify-content-center mb-3">
-            <div class="col-9">
-                <input type="text" class="form-control me-lg-3 col url" placeholder="Recipe URL" aria-label="Recipe URL"
-                       value="http://mobile.kptncook.com/recipe/pinterest/Chicken-Tikka-Masala/6d388c77?_branch_match_id=984928197596265013&utm_source=WhatsApp&utm_medium=sharing&_branch_referrer=H4sIAAAAAAAAA8soKSkottLXL85ILMrMS9fLLijJS87Pz9ZLzs%2FVDzDNDQwMT41My08CAHHc9A4oAAAA">
-            </div>
-            <div class="col-1">
-                <input type="text" class="form-control col-8 people" placeholder="People" aria-label="Amount of people"
-                       value="1">
+                       value="2">
             </div>
 
             <div class="col-1 align-self-center">
@@ -93,7 +48,16 @@
         </div>
     </div>
 
-
+    <div class="position-fixed bottom-0 start-0">
+        <div id="toast" class="toast align-items-center" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="2000">
+            <div class="d-flex">
+                <div class="toast-body">
+                    Ingredients are copied to clipboard!
+                </div>
+                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script src="maps.js"></script>
