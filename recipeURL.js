@@ -1,7 +1,4 @@
 function getIngredients(recipe, doc) {
-    console.log("Recipe to process: ")
-    console.log(recipe)
-
     const servings = recipe.people * servingsPerPerson;
 
     switch (recipe.url.hostname) {
@@ -112,14 +109,67 @@ function getIngredientsFromNoraCooks(doc, servings) {
     return recipe
 }
 
-function getIngredientsFromBiancaZapatka(doc, people) {
+function getIngredientsFromBiancaZapatka(doc, servings) {
     console.warn("BiancaZapatka isn't implemented yet")
     return {name: "", servings: 0, ingredients: []}
 }
 
-function getIngredientsFromEatThis(doc, people) {
-    console.warn("EatThis isn't implemented yet")
-    return {name: "", servings: 0, ingredients: []}
+function getIngredientsFromEatThis(doc, servings) {
+    const title = doc.getElementsByClassName("entry-title")[0].innerText.trim()
+    const recipe = {name: title, servings: servings, ingredients: []}
+
+    const recipeServings = Number(doc.getElementsByClassName("wprm-recipe-container")[0].dataset.servings)
+    const servingsMultiplier = servings / recipeServings
+
+    const ingredients = doc.getElementsByClassName("wprm-recipe-ingredient")
+
+    for (const ingredient of ingredients) {
+        let amount = ""
+        const amountElements = ingredient.getElementsByClassName("wprm-recipe-ingredient-amount")
+        if (amountElements.length === 1) {
+            const amountString = ingredient.getElementsByClassName("wprm-recipe-ingredient-amount")[0].innerText
+            amount = getAmountFromString(amountString, servingsMultiplier)
+        }
+
+        let unit = ""
+        let unitElements = ingredient.getElementsByClassName("wprm-recipe-ingredient-unit")
+        if (unitElements.length === 1)
+            unit = unitElements[0].innerText
+
+        let name = ""
+        let nameElement = ingredient.getElementsByClassName("wprm-recipe-ingredient-name")[0]
+        if (nameElement.children.length === 0)
+            name = nameElement.innerText
+        else
+            name = nameElement.children[0].innerText
+
+        recipe.ingredients.push({amount: amount, unit: unit, name: name})
+    }
+
+    return recipe
+}
+
+function getAmountFromString(amountString, servingsMultiplier) {
+    let amount = 0
+
+    amountString = amountString.trim()
+
+    const parts = amountString.split(/\s/)
+    for (const part of parts) {
+        // Check if string is a fraction char
+        let fraction = fractions[part]
+        if (fraction !== null && fraction !== undefined)
+            amount += Number(fraction)
+        else if (part.includes("/")) { // Check for fraction via '/'
+            const fractionParts = part.split("/")
+            fraction = fractionParts[0] / fractionParts[1]
+            amount += Number(fraction)
+        } else {
+            amount += Number(part.replace(",", "."))
+        }
+    }
+
+    return parseFloat((amount * servingsMultiplier).toFixed(2))
 }
 
 function translate(string) {
@@ -143,6 +193,7 @@ function convertToMetricSystemNoraCooks(unit, name) {
 }
 
 function convertFraction(fraction) {
+    // TODO: use getAmountFromString instead
     if (!fraction.includes("/"))
         return fraction
 

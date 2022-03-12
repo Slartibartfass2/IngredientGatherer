@@ -1,7 +1,7 @@
 let recipes = [];
 let ingredientCollection = [];
 
-const supportedURLs = ["mobile.kptncook.com", "www.noracooks.com"]
+const supportedURLs = ["mobile.kptncook.com", "www.noracooks.com", "www.eat-this.org"]
 
 const urlForm = document.getElementById("urls").children[0].cloneNode(true)
 
@@ -9,7 +9,7 @@ function collectURLs() {
     const forms = document.getElementById("urls").children
 
     for (const form of forms) {
-        const url = form.getElementsByClassName("url")[0].value
+        let url = form.getElementsByClassName("url")[0].value
         const people = form.getElementsByClassName("people")[0].value
 
         if (url === "" || people === "") continue
@@ -26,9 +26,27 @@ function collectURLs() {
             continue
         }
 
+        // Change http to https
+        if (!url.includes("https"))
+            url = url.replace("http", "https")
+
         recipes.push({url: new URL(url), people: Number(people)})
     }
 }
+
+// Fetch test data
+// fetch("https://www.eat-this.org/rezepte/dinner-time/").then((response) => {
+//     return response.text();
+// }).then((html) => {
+//     const parser = new DOMParser()
+//     const responseDoc = parser.parseFromString(html, "text/html")
+//     const list = responseDoc.getElementsByClassName("flex-grid")[0].children
+//     for (const recipe of list) {
+//         recipes.push({url: new URL(recipe.children[0].children[0].href), people: 2})
+//     }
+// }).catch((err) => {
+//     alert(err)
+// });
 
 function getRecipes() {
     console.clear()
@@ -53,7 +71,7 @@ function getRecipes() {
             ingredientCollection.push(getIngredients(recipe, responseDoc).ingredients)
             if (--toComputeCount === 0) mergeRecipes()
         }).catch((err) => {
-            alert("The data from " + recipe.url + " couldn't be fetched")
+            alert("The data from " + recipe.url + " couldn't be fetched: " + err)
             if (--toComputeCount === 0) mergeRecipes()
         });
     }
