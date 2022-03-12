@@ -1,12 +1,9 @@
-let index = 0;
 let recipes = [];
 let ingredientCollection = [];
 
 const supportedURLs = ["mobile.kptncook.com", "www.noracooks.com"]
 
 const urlForm = document.getElementById("urls").children[0].cloneNode(true)
-
-const xhttp = new XMLHttpRequest();
 
 function collectURLs() {
     const forms = document.getElementById("urls").children
@@ -15,8 +12,7 @@ function collectURLs() {
         const url = form.getElementsByClassName("url")[0].value
         const people = form.getElementsByClassName("people")[0].value
 
-        if (url === "" || people === "")
-            continue
+        if (url === "" || people === "") continue
 
         // Check for valid inputs
         if (!isURL(url) || isNaN(people) || people < 0) {
@@ -35,7 +31,7 @@ function collectURLs() {
 }
 
 function getRecipes() {
-    index = 0
+    console.clear()
     recipes = []
     ingredientCollection = []
 
@@ -46,28 +42,24 @@ function getRecipes() {
 
     if (recipes.length === 0) return
 
-    xhttp.open("GET", recipes[0].url, true);
-    xhttp.send();
+    let toComputeCount = recipes.length
+
+    for (const recipe of recipes) {
+        fetch(recipe.url).then((response) => {
+            return response.text();
+        }).then((html) => {
+            const parser = new DOMParser()
+            const responseDoc = parser.parseFromString(html, "text/html")
+            ingredientCollection.push(getIngredients(recipe, responseDoc).ingredients)
+            if (--toComputeCount === 0) mergeRecipes()
+        }).catch((err) => {
+            alert("The data from " + recipe.url + " couldn't be fetched")
+            if (--toComputeCount === 0) mergeRecipes()
+        });
+    }
 }
 
-xhttp.onreadystatechange = function () {
-    if (this.readyState === 4 && this.status === 200) {
-        const parser = new DOMParser();
-        const responseDoc = parser.parseFromString(xhttp.responseText, "text/html");
-
-        ingredientCollection.push(getIngredients(recipes[index], responseDoc).ingredients)
-
-        if (index + 1 < recipes.length) {
-            index++
-            xhttp.open("GET", recipes[index].url, true);
-            xhttp.send();
-        } else {
-            mergeAllRecipes();
-        }
-    }
-};
-
-function mergeAllRecipes() {
+function mergeRecipes() {
     if (ingredientCollection.length === 0) return
 
     console.log("collected recipes: ")
@@ -76,12 +68,10 @@ function mergeAllRecipes() {
     let result = []
     for (const recipe of ingredientCollection) {
         for (const ingredient of recipe) {
-            index = getIndex(ingredient.name, ingredient.unit, result)
+            let index = getIndex(ingredient.name, ingredient.unit, result)
 
-            if (index === -1)
-                result.push(ingredient)
-            else
-                result[index].amount += ingredient.amount
+            if (index === -1) result.push(ingredient)
+            else result[index].amount += ingredient.amount
         }
     }
 

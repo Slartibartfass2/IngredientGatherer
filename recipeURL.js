@@ -66,16 +66,14 @@ function getIngredientsFromNoraCooks(doc, servings) {
     const recipeServings = Number(recipeContainer.dataset.servings)
     const servingsMultiplier = servings / recipeServings
 
-    console.log(servingsMultiplier)
-
     const ingredients = recipeContainer.getElementsByClassName("wprm-recipe-ingredient")
 
     for (const ingredient of ingredients) {
         const amountElements = ingredient.getElementsByClassName("wprm-recipe-ingredient-amount")
         let amount = ""
         if (amountElements.length === 1) {
-            amount = amountElements[0].innerText.trim()
-            amount = convertFraction(amount)
+            amount = convertFraction(amountElements[0].innerText.trim())
+            amount = Math.round(amount * servingsMultiplier * 100) / 100
         }
 
         let unit = ""
