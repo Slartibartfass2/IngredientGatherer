@@ -60,7 +60,9 @@ function getRecipes() {
 
     if (recipes.length === 0) return
 
-    let toComputeCount = recipes.length
+    let toComputeCount = 0
+
+    document.getElementById("progressBarContainer").classList.remove("visually-hidden")
 
     for (const recipe of recipes) {
         fetch(recipe.url).then((response) => {
@@ -69,12 +71,24 @@ function getRecipes() {
             const parser = new DOMParser()
             const responseDoc = parser.parseFromString(html, "text/html")
             ingredientCollection.push(getIngredients(recipe, responseDoc).ingredients)
-            if (--toComputeCount === 0) mergeRecipes()
+            toComputeCount = updateProgress(toComputeCount, recipes.length)
         }).catch((err) => {
             alert("The data from " + recipe.url + " couldn't be fetched: " + err)
-            if (--toComputeCount === 0) mergeRecipes()
+            toComputeCount = updateProgress(toComputeCount, recipes.length)
         });
     }
+}
+
+function updateProgress(toComputeCount, maxCount) {
+    toComputeCount++
+    const progress = (toComputeCount / maxCount * 100)
+    console.log(progress)
+    document.getElementById("progressBar").style.width = progress + "%"
+    if (toComputeCount === maxCount) {
+        document.getElementById("progressBarContainer").classList.add("visually-hidden")
+        mergeRecipes()
+    }
+    return toComputeCount
 }
 
 function mergeRecipes() {
@@ -157,5 +171,5 @@ function addURLForm() {
 }
 
 function deleteURLForm(button) {
-    button.parentElement.parentElement.remove()
+    button.parentElement.parentElement.parentElement.parentElement.remove()
 }

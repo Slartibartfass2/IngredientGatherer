@@ -11,38 +11,38 @@
 </head>
 <body>
 <div class="container mt-5">
-    <div class="row justify-content-center mb-1">
-        <div class="col-11">
-            <h3>Insert your recipe URLs</h3>
-        </div>
-    </div>
-
+    <h3>Insert your recipe URLs</h3>
     <div id="urls">
         <form class="row justify-content-center mb-3">
-            <div class="col-9">
-                <input type="text" class="form-control me-lg-3 col url" placeholder="Recipe URL" aria-label="Recipe URL"
+            <div class="col-10">
+                <input type="text" class="form-control me-lg-3 url" placeholder="Recipe URL" aria-label="Recipe URL"
                        value="https://www.eat-this.org/veganes-biryani-mit-tofu/">
             </div>
-            <div class="col-1">
-                <input type="text" class="form-control col-8 people" placeholder="People" aria-label="Amount of people"
-                       value="2">
-            </div>
-
-            <div class="col-1 align-self-center">
-                <button type="button" class="btn-close" aria-label="Close" onclick="deleteURLForm(this)"></button>
+            <div class="col-2">
+                <div class="row">
+                    <input type="text" class="form-control col people" placeholder="People" aria-label="Amount of people"
+                           value="2">
+                    <div class="align-self-center col">
+                        <button type="button" class="btn-close" aria-label="Close" onclick="deleteURLForm(this)"></button>
+                    </div>
+                </div>
             </div>
         </form>
     </div>
-    <div class="row justify-content-center">
-        <div class="col-11 mb-3">
+    <div class="">
+        <div class="mb-3">
             <button type="button" class="btn btn-primary" aria-label="Add URL" onclick="addURLForm()">Add URL</button>
         </div>
 
-        <div class="col-11 mb-3">
+        <div class="mb-3">
             <button type="button" class="btn btn-primary" onclick="getRecipes()">Collect Ingredients</button>
         </div>
 
-        <div class="col-11">
+        <div id="progressBarContainer" class="progress mb-3 visually-hidden">
+            <div id="progressBar" class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+
+        <div class="">
             <label for="ingredients" class="form-label">Ingredients</label>
             <textarea class="form-control" id="ingredients" rows="10"></textarea>
         </div>
