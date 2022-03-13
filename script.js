@@ -83,7 +83,10 @@ function updateProgress(toComputeCount, maxCount) {
     toComputeCount++
     const progress = (toComputeCount / maxCount * 100)
     console.log(progress)
-    document.getElementById("progressBar").style.width = progress + "%"
+    const progressBar = document.getElementById("progressBar")
+    progressBar.style.width = progress + "%"
+    progressBar.ariaValueNow = progress.toString()
+    progressBar.innerText = progress + "%"
     if (toComputeCount === maxCount) {
         document.getElementById("progressBarContainer").classList.add("visually-hidden")
         mergeRecipes()

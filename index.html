@@ -20,10 +20,12 @@
             </div>
             <div class="col-2">
                 <div class="row">
-                    <input type="text" class="form-control col people" placeholder="People" aria-label="Amount of people"
+                    <input type="text" class="form-control col people" placeholder="People"
+                           aria-label="Amount of people"
                            value="2">
                     <div class="align-self-center col">
-                        <button type="button" class="btn-close" aria-label="Close" onclick="deleteURLForm(this)"></button>
+                        <button type="button" class="btn-close" aria-label="Close"
+                                onclick="deleteURLForm(this)"></button>
                     </div>
                 </div>
             </div>
@@ -39,17 +41,19 @@
         </div>
 
         <div id="progressBarContainer" class="progress mb-3 visually-hidden">
-            <div id="progressBar" class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+            <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+                 aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
         </div>
 
-        <div class="">
+        <div class="mb-3">
             <label for="ingredients" class="form-label">Ingredients</label>
             <textarea class="form-control" id="ingredients" rows="10"></textarea>
         </div>
     </div>
 
     <div class="position-fixed bottom-0 start-0">
-        <div id="toast" class="toast align-items-center" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="2000">
+        <div id="toast" class="toast align-items-center" role="alert" aria-live="assertive" aria-atomic="true"
+             data-bs-delay="2000">
             <div class="d-flex">
                 <div class="toast-body">
                     Ingredients are copied to clipboard!
