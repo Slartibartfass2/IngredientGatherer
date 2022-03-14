@@ -49,6 +49,21 @@
 
         <div class="mb-3">
             <label for="ingredients" class="form-label">Ingredients</label>
+            <br>
+            <div class="btn-group-sm mb-2" role="group" aria-label="Basic radio toggle button group">
+                Sort by:
+                <input type="radio" class="btn-check" name="btnradio" id="btnSortByAmount" autocomplete="off" checked
+                       onclick="displayIngredientList()">
+                <label class="btn btn-outline-primary" for="btnSortByAmount">Amount</label>
+
+                <input type="radio" class="btn-check" name="btnradio" id="btnSortByRecipe" autocomplete="off"
+                       onclick="displayIngredientList()">
+                <label class="btn btn-outline-primary" for="btnSortByRecipe">Recipe</label>
+
+                <input type="radio" class="btn-check" name="btnradio" id="btnSortByCategory" autocomplete="off"
+                       onclick="displayIngredientList()">
+                <label class="btn btn-outline-primary" for="btnSortByCategory">Category (WIP)</label>
+            </div>
             <textarea class="form-control" id="ingredients" rows="10"></textarea>
         </div>
     </div>

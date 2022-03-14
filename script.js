@@ -1,4 +1,7 @@
-let ingredientCollection = [];
+let ingredientCollection = []
+let sortedByAmountText = ""
+let sortedByRecipeText = ""
+let sortedByCategoryText = ""
 
 const supportedURLs = ["mobile.kptncook.com", "www.noracooks.com", "www.eat-this.org"]
 
@@ -50,7 +53,7 @@ function collectURLs() {
 //     alert(err)
 // });
 
-async function getRecipes() {
+function getRecipes() {
     console.clear()
     ingredientCollection = []
 
@@ -71,28 +74,28 @@ async function getRecipes() {
 
     for (let i = 0; i < recipes.length; i++) {
         const recipe = recipes[i]
-        await fetch(recipe.url).then((response) => {
+        fetch(recipe.url).then((response) => {
             return response.text();
         }).then((html) => {
             const parser = new DOMParser()
             const responseDoc = parser.parseFromString(html, "text/html")
             const fetchedRecipe = getIngredients(recipe, responseDoc)
-            console.log(fetchedRecipe)
-            ingredientCollection.push(fetchedRecipe.ingredients)
+            ingredientCollection.push(fetchedRecipe)
             toComputeCount = updateProgress(toComputeCount, recipes.length)
-            const label = document.getElementsByClassName("url-label")[i]
-            label.classList.remove("invalid-url-label")
-            label.classList.add("valid-url-label")
-            label.innerText = fetchedRecipe.servings + " servings of '" + fetchedRecipe.name
+            displayLabel(i, true, fetchedRecipe)
         }).catch((err) => {
-            const label = document.getElementsByClassName("url-label")[i]
-            label.classList.remove("valid-url-label")
-            label.classList.add("invalid-url-label")
-            label.innerText = "Invalid input."
+            displayLabel(i, false, null)
             alert("The data from\n" + recipe.url + "\ncouldn't be fetched: " + err + ".\nYou maybe need a CORS plugin to use this website.")
             toComputeCount = updateProgress(toComputeCount, recipes.length)
         });
     }
+}
+
+function displayLabel(i, valid, recipe) {
+    const label = document.getElementsByClassName("url-label")[i]
+    label.classList.remove((valid ? "in" : "") + "valid-url-label")
+    label.classList.add((valid ? "" : "in") + "valid-url-label")
+    label.innerText = valid ? (recipe.servings + " servings of '" + recipe.name) : "Invalid input."
 }
 
 function updateProgress(toComputeCount, maxCount) {
@@ -106,20 +109,35 @@ function updateProgress(toComputeCount, maxCount) {
     if (toComputeCount === maxCount) {
         document.getElementById("progressBarContainer").classList.add("visually-hidden")
         progressBar.style.width = "0%"
-        mergeRecipes()
+        finishCollectingRecipes()
     }
     return toComputeCount
 }
 
-function mergeRecipes() {
+function finishCollectingRecipes() {
     if (ingredientCollection.length === 0) return
 
     console.log("collected recipes: ")
     console.log(ingredientCollection)
 
+    sortedByAmountText = mergeRecipes()
+
+    sortedByRecipeText = ""
+    for (const recipe of ingredientCollection) {
+        console.log(recipe)
+        sortedByRecipeText += recipe.name + "\n"
+        for (const ingredient of recipe.ingredients) {
+            sortedByRecipeText += "    " + formatIngredient(ingredient) + "\n"
+        }
+    }
+
+    displayIngredientList()
+}
+
+function mergeRecipes() {
     let result = []
     for (const recipe of ingredientCollection) {
-        for (const ingredient of recipe) {
+        for (const ingredient of recipe.ingredients) {
             let index = getIndex(ingredient.name, ingredient.unit, result)
 
             if (index === -1) result.push(ingredient)
@@ -134,22 +152,49 @@ function mergeRecipes() {
 
     // write everything into textbox
     let resultText = "";
-    for (const element of result) {
-        if (element.amount !== "") resultText += element.amount + " "
-        if (element.unit !== "") resultText += element.unit + " "
-        resultText += element.name + "\n"
-    }
+    for (const element of result)
+        resultText += formatIngredient(element) + "\n"
 
-    document.getElementById("ingredients").value = resultText
+    return resultText
+}
 
-    // let data = [new ClipboardItem({ "text/plain": new Blob([resultText], { type: "text/plain" }) })];
-    // navigator.clipboard.write(data).then(function() {
-    //     console.log("Copied to clipboard successfully!");
-    //     const toast = new bootstrap.Toast(document.getElementById("toast"))
-    //     toast.show()
-    // }, function() {
-    //     console.error("Unable to write to clipboard. :-(");
-    // });
+function formatIngredient(ingredient) {
+    let result = ""
+    if (ingredient.amount !== "") result += ingredient.amount + " "
+    if (ingredient.unit !== "") result += ingredient.unit + " "
+    result += ingredient.name
+    return result
+}
+
+function displayIngredientList() {
+    let copyText = ""
+    if (document.getElementById("btnSortByAmount").checked) {
+        // Sort by amount
+        console.log("sort by amount")
+        document.getElementById("ingredients").value = sortedByAmountText
+    } else if (document.getElementById("btnSortByRecipe").checked) {
+        // Sort by recipe
+        console.log("sort by recipe")
+        document.getElementById("ingredients").value = sortedByRecipeText
+    } else if (document.getElementById("btnSortByCategory").checked) {
+        // Sort by category
+        console.log("sort by category")
+
+    } else return;
+
+    copyToClipboard(copyText)
+}
+
+function copyToClipboard(ingredientText) {
+    return
+    let data = [new ClipboardItem({"text/plain": new Blob([ingredientText], {type: "text/plain"})})];
+    navigator.clipboard.write(data).then(function () {
+        console.log("Copied to clipboard successfully!");
+        const toast = new bootstrap.Toast(document.getElementById("toast"))
+        toast.show()
+    }, function () {
+        console.error("Unable to write to clipboard. :-(");
+    });
 }
 
 function getIndex(name, unit, result) {
