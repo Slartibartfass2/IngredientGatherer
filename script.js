@@ -1,4 +1,3 @@
-let recipes = [];
 let ingredientCollection = [];
 
 const supportedURLs = ["mobile.kptncook.com", "www.noracooks.com", "www.eat-this.org"]
@@ -7,6 +6,7 @@ const urlForm = document.getElementById("urls").children[0].cloneNode(true)
 
 function collectURLs() {
     const forms = document.getElementById("urls").children
+    const recipes = []
 
     for (const form of forms) {
         let url = form.getElementsByClassName("url")[0].value
@@ -32,6 +32,8 @@ function collectURLs() {
 
         recipes.push({url: new URL(url), people: Number(people)})
     }
+
+    return recipes
 }
 
 // Fetch test data
@@ -48,32 +50,46 @@ function collectURLs() {
 //     alert(err)
 // });
 
-function getRecipes() {
+async function getRecipes() {
     console.clear()
-    recipes = []
     ingredientCollection = []
 
-    collectURLs()
+    const recipes = collectURLs()
+
+    if (recipes.length === 0) return
 
     console.log("Recipes: ")
     console.log(recipes)
-
-    if (recipes.length === 0) return
 
     let toComputeCount = 0
 
     document.getElementById("progressBarContainer").classList.remove("visually-hidden")
 
-    for (const recipe of recipes) {
-        fetch(recipe.url).then((response) => {
+    const labels = document.getElementsByClassName("url-label")
+    for (const label of labels)
+        label.innerText = ""
+
+    for (let i = 0; i < recipes.length; i++) {
+        const recipe = recipes[i]
+        await fetch(recipe.url).then((response) => {
             return response.text();
         }).then((html) => {
             const parser = new DOMParser()
             const responseDoc = parser.parseFromString(html, "text/html")
-            ingredientCollection.push(getIngredients(recipe, responseDoc).ingredients)
+            const fetchedRecipe = getIngredients(recipe, responseDoc)
+            console.log(fetchedRecipe)
+            ingredientCollection.push(fetchedRecipe.ingredients)
             toComputeCount = updateProgress(toComputeCount, recipes.length)
+            const label = document.getElementsByClassName("url-label")[i]
+            label.classList.remove("invalid-url-label")
+            label.classList.add("valid-url-label")
+            label.innerText = fetchedRecipe.servings + " servings of '" + fetchedRecipe.name
         }).catch((err) => {
-            alert("The data from " + recipe.url + " couldn't be fetched: " + err)
+            const label = document.getElementsByClassName("url-label")[i]
+            label.classList.remove("valid-url-label")
+            label.classList.add("invalid-url-label")
+            label.innerText = "Invalid input."
+            alert("The data from\n" + recipe.url + "\ncouldn't be fetched: " + err + ".\nYou maybe need a CORS plugin to use this website.")
             toComputeCount = updateProgress(toComputeCount, recipes.length)
         });
     }
@@ -86,9 +102,10 @@ function updateProgress(toComputeCount, maxCount) {
     const progressBar = document.getElementById("progressBar")
     progressBar.style.width = progress + "%"
     progressBar.ariaValueNow = progress.toString()
-    progressBar.innerText = progress + "%"
+    progressBar.innerText = progress.toFixed(2) + "%"
     if (toComputeCount === maxCount) {
         document.getElementById("progressBarContainer").classList.add("visually-hidden")
+        progressBar.style.width = "0%"
         mergeRecipes()
     }
     return toComputeCount

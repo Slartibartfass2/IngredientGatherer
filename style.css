@@ -1,0 +1,14 @@
+.url-label {
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.875em;
+    margin-left: 0.1rem;
+}
+
+.valid-url-label {
+    color: #198754;
+}
+
+.invalid-url-label {
+    color: #dc3545;
+}
