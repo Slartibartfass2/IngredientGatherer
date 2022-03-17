@@ -3,7 +3,7 @@ let sortedByAmountText = ""
 let sortedByRecipeText = ""
 let sortedByCategoryText = ""
 
-const supportedURLs = ["mobile.kptncook.com", "www.noracooks.com", "www.eat-this.org"]
+const supportedURLs = ["mobile.kptncook.com", "www.noracooks.com", "www.eat-this.org", "biancazapatka.com"]
 
 const urlForm = document.getElementById("urls").children[0].cloneNode(true)
 
@@ -95,7 +95,7 @@ function displayLabel(i, valid, recipe) {
     const label = document.getElementsByClassName("url-label")[i]
     label.classList.remove((valid ? "in" : "") + "valid-url-label")
     label.classList.add((valid ? "" : "in") + "valid-url-label")
-    label.innerText = valid ? (recipe.servings + " servings of '" + recipe.name) : "Invalid input."
+    label.innerText = valid ? (recipe.servings + " servings of '" + recipe.name + "'") : "Invalid input."
 }
 
 function updateProgress(toComputeCount, maxCount) {

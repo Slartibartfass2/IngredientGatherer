@@ -1,8 +1,6 @@
 const servingsPerPerson = 2;
 
-const units = [
-    "el", "tl", "cup", "cups", "oz", "g", "mg", "kg", "ml", "l", "cl"
-]
+const units = ["el", "tl", "cup", "cups", "oz", "g", "mg", "kg", "ml", "l", "cl"]
 
 const noraCooksCupMap = {
     "cooked and chilled rice": [190, "g"],
@@ -13,11 +11,7 @@ const noraCooksCupMap = {
 }
 
 const translation = {
-    "teaspoon": "TL",
-    "teaspoons": "TL",
-    "tablespoon": "EL",
-    "tablespoons": "EL",
-    "tbsp": "EL",
+    "teaspoon": "TL", "teaspoons": "TL", "tablespoon": "EL", "tablespoons": "EL", "tbsp": "EL",
 }
 
 // noinspection NonAsciiCharacters

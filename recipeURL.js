@@ -110,8 +110,40 @@ function getIngredientsFromNoraCooks(doc, servings) {
 }
 
 function getIngredientsFromBiancaZapatka(doc, servings) {
-    console.warn("BiancaZapatka isn't implemented yet")
-    return {name: "", servings: 0, ingredients: []}
+    const title = capslockToPascalCase(doc.getElementsByClassName("entry-title")[0].innerText.trim())
+    const recipe = {name: title, servings: servings, ingredients: []}
+
+    const recipeServings = Number(doc.getElementsByClassName("wprm-recipe-container")[0].dataset.servings)
+    const servingsMultiplier = servings / recipeServings
+
+    const ingredients = doc.getElementsByClassName("wprm-recipe-ingredient")
+
+    for (const ingredient of ingredients) {
+        const amountAndUnitContainer = ingredient.getElementsByClassName("wprm-recipe-ingredient-unit-system-1")[0]
+
+        let amount = ""
+        const amountElements = amountAndUnitContainer.getElementsByClassName("wprm-recipe-ingredient-amount")
+        if (amountElements.length === 1) {
+            const amountString = amountAndUnitContainer.getElementsByClassName("wprm-recipe-ingredient-amount")[0].innerText
+            amount = getAmountFromString(amountString, servingsMultiplier)
+        }
+
+        let unit = ""
+        let unitElements = amountAndUnitContainer.getElementsByClassName("wprm-recipe-ingredient-unit")
+        if (unitElements.length === 1)
+            unit = unitElements[0].innerText
+
+        let name = ""
+        let nameElement = ingredient.getElementsByClassName("wprm-recipe-ingredient-name")[0]
+        if (nameElement.children.length === 0)
+            name = nameElement.innerText
+        else
+            name = nameElement.children[0].innerText
+
+        recipe.ingredients.push({amount: amount, unit: unit, name: name})
+    }
+
+    return recipe
 }
 
 function getIngredientsFromEatThis(doc, servings) {
@@ -160,7 +192,10 @@ function getAmountFromString(amountString, servingsMultiplier) {
         let fraction = fractions[part]
         if (fraction !== null && fraction !== undefined)
             amount += Number(fraction)
-        else if (part.includes("/")) { // Check for fraction via '/'
+        else if (part.includes("-")) {
+            const rangeParts = part.split("-")
+            amount += Number(rangeParts[1])
+        } else if (part.includes("/")) { // Check for fraction via '/'
             const fractionParts = part.split("/")
             fraction = fractionParts[0] / fractionParts[1]
             amount += Number(fraction)
@@ -199,4 +234,10 @@ function convertFraction(fraction) {
 
     const parts = fraction.split("/");
     return parts[0] / parts[1]
+}
+
+function capslockToPascalCase(string) {
+    return string.replace(/(\w)(\w*)/g, (g0, g1, g2) => {
+        return g1.toUpperCase() + g2.toLowerCase()
+    });
 }
