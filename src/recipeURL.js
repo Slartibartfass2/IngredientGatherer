@@ -150,8 +150,25 @@ function getIngredientsFromEatThis(doc, servings) {
     const title = doc.getElementsByClassName("entry-title")[0].innerText.trim()
     const recipe = {name: title, servings: servings, ingredients: []}
 
+    if (doc.getElementsByClassName("wprm-recipe-container").length > 0) {
+        getIngredientsFromEatThisNewDesign(doc, recipe)
+    } else if (doc.getElementsByClassName("zutaten").length > 0) {
+        getIngredientsFromEatThisOldDesign(doc, recipe)
+    } else {
+        const linkElements = doc.head.getElementsByTagName("link")
+        for (const linkElement of linkElements) {
+            if (linkElement.rel === "canonical" && !knownNotSupportedURLs.includes(linkElement.href)) {
+                console.error("not supported page design: " + linkElement.href)
+            }
+        }
+    }
+
+    return recipe
+}
+
+function getIngredientsFromEatThisNewDesign(doc, recipe) {
     const recipeServings = Number(doc.getElementsByClassName("wprm-recipe-container")[0].dataset.servings)
-    const servingsMultiplier = servings / recipeServings
+    const servingsMultiplier = recipe.servings / recipeServings
 
     const ingredients = doc.getElementsByClassName("wprm-recipe-ingredient")
 
@@ -177,8 +194,37 @@ function getIngredientsFromEatThis(doc, servings) {
 
         recipe.ingredients.push({amount: amount, unit: unit, name: name})
     }
+}
 
-    return recipe
+function getIngredientsFromEatThisOldDesign(doc, recipe) {
+    const recipeServings = Number(doc.getElementsByClassName("zutaten")[0].children[0].innerText.split(/\s/)[2])
+    const servingsMultiplier = recipe.servings / recipeServings
+
+    const ingredients = doc.getElementsByClassName("zutaten")[0].getElementsByTagName("li")
+
+    for (const ingredient of ingredients) {
+        const ingredientParts = ingredient.innerText.split(/\s/)
+
+        let amount = ""
+        let unit = ""
+        let name = ""
+
+        if (!isNaN(parseFloat(ingredientParts[0]))) {
+            amount = parseFloat(ingredientParts[0]) * servingsMultiplier
+
+            if (ingredientParts.length > 2) {
+                unit = ingredientParts[1]
+                for (let i = 2; i < ingredientParts.length; i++)
+                    name += ingredientParts[i]
+            } else {
+                name = ingredientParts[1]
+            }
+        } else {
+            for (const item of ingredientParts) name += item
+        }
+
+        recipe.ingredients.push({amount: amount, unit: unit, name: name})
+    }
 }
 
 function getAmountFromString(amountString, servingsMultiplier) {
@@ -241,3 +287,6 @@ function capslockToPascalCase(string) {
         return g1.toUpperCase() + g2.toLowerCase()
     });
 }
+
+const knownNotSupportedURLs = ["https://www.eat-this.org/genial-einfacher-veganer-milchschaum-caffe-latte-mit-coffee-circle/",
+    "https://www.eat-this.org/veganes-raclette/", "https://www.eat-this.org/wie-man-eine-vegane-kaeseplatte-zusammenstellt/"]

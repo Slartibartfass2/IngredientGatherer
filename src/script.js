@@ -3,15 +3,19 @@ let sortedByAmountText = ""
 let sortedByRecipeText = ""
 let sortedByCategoryText = ""
 
+// TODO: Tests schreiben die alle Rezepte einer Webseite durchgehen und software testen
+// TODO: jquery anwenden
+
 const supportedURLs = ["mobile.kptncook.com", "www.noracooks.com", "www.eat-this.org", "biancazapatka.com"]
 
 const urlForm = document.getElementById("urls").children[0].cloneNode(true)
 
 function collectURLs() {
-    const forms = document.getElementById("urls").children
     const recipes = []
 
+    const forms = $('#urls')[0].children
     for (const form of forms) {
+
         let url = form.getElementsByClassName("url")[0].value
         const people = form.getElementsByClassName("people")[0].value
 
@@ -39,20 +43,6 @@ function collectURLs() {
     return recipes
 }
 
-// Fetch test data
-// fetch("https://www.eat-this.org/rezepte/dinner-time/").then((response) => {
-//     return response.text();
-// }).then((html) => {
-//     const parser = new DOMParser()
-//     const responseDoc = parser.parseFromString(html, "text/html")
-//     const list = responseDoc.getElementsByClassName("flex-grid")[0].children
-//     for (const recipe of list) {
-//         recipes.push({url: new URL(recipe.children[0].children[0].href), people: 2})
-//     }
-// }).catch((err) => {
-//     alert(err)
-// });
-
 function getRecipes() {
     console.clear()
     ingredientCollection = []
@@ -75,7 +65,7 @@ function getRecipes() {
     for (let i = 0; i < recipes.length; i++) {
         const recipe = recipes[i]
         fetch(recipe.url).then((response) => {
-            return response.text();
+            return response.text()
         }).then((html) => {
             const parser = new DOMParser()
             const responseDoc = parser.parseFromString(html, "text/html")
@@ -85,7 +75,7 @@ function getRecipes() {
             displayLabel(i, true, fetchedRecipe)
         }).catch((err) => {
             displayLabel(i, false, null)
-            alert("The data from\n" + recipe.url + "\ncouldn't be fetched: " + err + ".\nYou maybe need a CORS plugin to use this website.")
+            alert("The data from\n" + recipe.url + "\ncouldn't be fetched: " + err + ".\nYou may need a CORS plugin to use this website.")
             toComputeCount = updateProgress(toComputeCount, recipes.length)
         });
     }
