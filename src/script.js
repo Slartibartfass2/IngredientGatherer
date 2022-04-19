@@ -10,6 +10,8 @@ const supportedURLs = ["mobile.kptncook.com", "www.noracooks.com", "www.eat-this
 
 const urlForm = document.getElementById("urls").children[0].cloneNode(true)
 
+for (let i = 0; i < 6; i++) addURLForm()
+
 function collectURLs() {
     const recipes = []
 
