@@ -1,3 +1,5 @@
+**This project has been replaced by [ingredient_collector](https://github.com/Slartibartfass2/ingredient_collector) and is no longer maintained.**
+
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/Slartibartfass2/IngredientGatherer/pages%20build%20and%20deployment?logo=github)
 ![GitHub deployments](https://img.shields.io/github/deployments/Slartibartfass2/IngredientGatherer/github-pages?logo=github)
 ![GitHub last commit](https://img.shields.io/github/last-commit/Slartibartfass2/IngredientGatherer?logo=github)
